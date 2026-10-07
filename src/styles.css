@@ -139,9 +139,9 @@ input[type=range]::-moz-range-thumb { width: var(--slider-thumb); height: var(--
 .isolate { min-height:24px; justify-self:end; border:1px solid var(--line); border-radius:4px; padding:3px 6px; font-size:9px; color:var(--muted); background:transparent; }
 .isolate[aria-pressed=true] { color:var(--mint); border-color:var(--mint); background:#96d3bf16; }
 
-/* One audition button per module, centered in the header. */
-.module-title { display: grid; grid-template-columns: minmax(0, 1fr) auto minmax(30px, 1fr); }
-.module-name { min-width: 0; line-height: 1.35; }
+/* Single-line titles; audition controls sit together on the right. */
+.module-title { display: grid; grid-template-columns: minmax(0, 1fr) auto auto; gap: 6px; }
+.module-name { min-width: 0; line-height: 1.35; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .module-name .number { margin-right: 5px; }
 .module-title .isolate { justify-self: center; min-height: 28px; padding: 4px 8px; }
 .module-title .question { justify-self: end; margin-left: 0; }
@@ -158,7 +158,7 @@ input[type=range]::-moz-range-thumb { width: var(--slider-thumb); height: var(--
 #controls-stepseq { grid-template-columns: 1fr 1fr; }
 #controls-stepseq > .choices { grid-column: 1 / -1; }
 @media (max-width: 620px) { .transport-controls { grid-template-columns: 1fr; } }
-.module-actions { display: flex; gap: 4px; justify-self: center; }
+.module-actions { display: flex; gap: 4px; justify-self: end; white-space: nowrap; }
 .mute { min-height: 28px; padding: 4px 8px; border: 1px solid var(--line); border-radius: 4px; background: transparent; color: var(--muted); font-size: 9px; }
 .mute[aria-pressed=true] { color: var(--accent); border-color: var(--accent); background: #ecc17a19; }
 .profile-export { position: fixed; right: 12px; bottom: 12px; z-index: 30; padding: 8px 12px; border: 1px solid var(--mint); border-radius: 5px; background: var(--panel); color: var(--mint); font-size: 11px; }
