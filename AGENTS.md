@@ -20,6 +20,7 @@ Run `node tests/synth.mjs` and `node tests/profiler.mjs`.
 - Parameter diagrams respond while silent; only top wave/spectrum measure output.
 - Module Isolate compares against the preset; module Mute is reversible. Neither
   resets arp/sequencer state or clock phase. Global Mute is panic and stops transport.
+- Preserve manually edited Transpose when switching presets (including a return to 0).
 - Warm pad defaults; virtual/QWERTY keyboard starts at C4. MIDI permission is opt-in.
   Note shortcuts work with sliders focused. Preserve the sticky rack behavior.
 - Audio uses native nodes, not per-sample JS. Don't infer performance from mock tests.

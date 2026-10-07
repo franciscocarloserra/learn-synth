@@ -29,6 +29,7 @@ const REQUIRED = {
   gatePattern: ["gateOn"]
 };
 const muted = new Set();
+let userTranspose = null;
 let preset = "pad", isolated = null, draft = base();
 function base() {
   return { ...EXTRAS, ...PRESETS[preset], gatePattern: [...DEFAULT_GATE] };
@@ -53,9 +54,11 @@ function loadPatch(name) {
   preset = name;
   isolated = null;
   draft = base();
+  if (userTranspose !== null) draft.transpose = userTranspose;
   return effectivePatch();
 }
 function editPatch(key, value, current) {
+  if (key === "transpose") userTranspose = value;
   if (current) {
     for (const field of TRANSPORT)
       if (current[field] !== undefined)
