@@ -171,3 +171,5 @@ header { display: grid; grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr
   header { grid-template-columns: minmax(0, 1fr) auto; }
   .header-right { grid-column: 1 / -1; justify-self: stretch; justify-content: space-between; }
 }
+
+.header-links { display: flex; align-items: center; justify-self: center; white-space: nowrap; }
