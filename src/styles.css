@@ -58,9 +58,7 @@ h1 { font-size: 20px; font-weight: 550; letter-spacing: -.5px; margin: 0; }
 .scope-top { top: 12px; letter-spacing: 1px; }
 .scope-top span:first-child { color: var(--mint); }
 .scope-bottom { bottom: 10px; }
-.toolbar { margin: 6px 0; display: flex; gap: 5px; }
-.toolbar > .presets { flex: 1; min-width: 0; }
-.toolbar > .patch-file { flex: none; }
+.toolbar { margin: 6px 0; }
 .presets { display: flex; gap: 5px; overflow-x: auto; padding: 1px; }
 .preset {
   flex: 1 0 62px; min-height: 38px; padding: 6px 5px; border: 1px solid #343d3e;
@@ -169,6 +167,7 @@ header { display: grid; grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr
 .header-right { justify-self: end; justify-content: flex-end; }
 .repo-link { justify-self: center; color: var(--muted); font-size: 11px; text-decoration: none; padding: 8px; }
 .repo-link:hover { color: var(--mint); }
+.patch-button { border: 0; background: none; cursor: pointer; font: inherit; font-size: 11px; }
 @media (max-width: 900px) {
   header { grid-template-columns: minmax(0, 1fr) auto; }
   .header-right { grid-column: 1 / -1; justify-self: stretch; justify-content: space-between; }
