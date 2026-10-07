@@ -5,7 +5,7 @@ import { params, audio, analyser, samples, spectrumData, spectrumBins, filterPre
 import { performanceNotes, gatePattern, noteOn, noteOff, releaseAll, syncClock } from "./sequencer.js";
 import { miniPlots, setFilterResponse, waveAt, linePath, drawCards, grid } from "./visualizers.js";
 import { report } from "./telemetry.js";
-import { loadPatch, editPatch as editStoredPatch, isolatePatch, mutePatch, patchState } from "./patch.js";
+import { loadPatch, editPatch as editStoredPatch, isolatePatch, mutePatch, patchState, savePatch, openPatch } from "./patch.js";
 const $ = (id) => document.getElementById(id);
 let selectedPreset = "pad", lastDraw = 0, preview = null, heldDirty = true, redraw = true, lastSoundFrame = 0;
 const EFFECT_KEYS = ["transpose", "noise", "drive", "tremDepth", "tremRate", "echoMix", "echoTime", "pan", "sub", "unison", "spread", "filterEnv", "filterDecay", "glide", "chorus", "chorusRate", "reverb"];
@@ -490,6 +490,32 @@ document.querySelectorAll("[data-preset]").forEach((b) => b.addEventListener("cl
   selectedPreset = b.dataset.preset;
   refresh();
 }));
+$("save-patch").addEventListener("click", () => {
+  const name = prompt("Patch name", "my-patch")?.trim();
+  if (!name)
+    return;
+  const link = document.createElement("a");
+  link.href = URL.createObjectURL(new Blob([JSON.stringify(savePatch(), null, 2)], { type: "application/json" }));
+  link.download = name.replace(/[\\/:*?"<>|]/g, "-") + ".json";
+  link.click();
+  URL.revokeObjectURL(link.href);
+});
+$("open-patch").addEventListener("click", () => $("patch-file").click());
+$("patch-file").addEventListener("change", async (e) => {
+  const file = e.target.files[0];
+  e.target.value = "";
+  if (!file)
+    return;
+  try {
+    releaseAll();
+    setParams(openPatch(JSON.parse(await file.text())));
+    gatePattern.splice(0, gatePattern.length, ...params.gatePattern);
+    selectedPreset = null;
+    refresh();
+  } catch (error) {
+    alert("Could not open patch: " + error.message);
+  }
+});
 document.querySelectorAll("[data-wave]").forEach((b) => b.addEventListener("click", () => {
   applyEditedPatch(editPatch("wave", b.dataset.wave));
   selectedPreset = null;

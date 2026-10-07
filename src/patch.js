@@ -82,7 +82,19 @@ function patchState() {
   return { preset, isolated, muted: [...muted] };
 }
 
-export { loadPatch, editPatch, isolatePatch, patchState };
+function savePatch() {
+  return { preset, patch: { ...draft, gatePattern: [...draft.gatePattern] } };
+}
+function openPatch(saved) {
+  muted.clear();
+  preset = PRESETS[saved.preset] ? saved.preset : "basic";
+  isolated = null;
+  draft = { ...base(), ...saved.patch };
+  draft.gatePattern = [...draft.gatePattern];
+  return effectivePatch();
+}
+
+export { loadPatch, editPatch, isolatePatch, patchState, savePatch, openPatch };
 
 export function mutePatch(module, current) {
   if (!MODULE_BYPASS[module]) return effectivePatch();
