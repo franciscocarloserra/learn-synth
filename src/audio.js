@@ -33,7 +33,22 @@ function initAudioImpl() {
   if (audio?.state === "running")
     return;
   if (!audio) {
-    audio = new (window.AudioContext || window.webkitAudioContext)({ latencyHint: SETTINGS.requestedLatency });
+    const Context = window.AudioContext || window.webkitAudioContext;
+    if (!Context) {
+      hooks.error("Web Audio unavailable");
+      throw new Error("This browser does not support Web Audio");
+    }
+    // Supported iOS browsers treat the synth as media playback, not silent-mode audio.
+    if (navigator.audioSession) {
+      try { navigator.audioSession.type = "playback"; }
+      catch (error) { report("audio-session", error.message); }
+    }
+    audio = new Context({ latencyHint: SETTINGS.requestedLatency });
+    // Request resume before building the graph, while user activation is still live.
+    audio.resume().catch(error => {
+      report("audio", error.message);
+      hooks.error("Tap Enable audio");
+    });
     filter = audio.createBiquadFilter();
     filter.type = params.filterMuted ? "allpass" : params.filterType;
     filter.frequency.value = params.cutoff;

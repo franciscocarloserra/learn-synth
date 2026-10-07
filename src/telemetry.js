@@ -10,7 +10,7 @@ for (const kind of ["warn", "error"]) {
 }
 window.addEventListener("error", (e) => report("error", `${e.message} ${e.filename}:${e.lineno}`));
 window.addEventListener("unhandledrejection", (e) => report("rejection", e.reason));
-if (window.PerformanceObserver && PerformanceObserver.supportedEntryTypes.includes("longtask"))
+if (window.PerformanceObserver && (PerformanceObserver.supportedEntryTypes || []).includes("longtask"))
   new PerformanceObserver((list) => {
     for (const e of list.getEntries())
       if (e.duration > SETTINGS.longTaskMs)

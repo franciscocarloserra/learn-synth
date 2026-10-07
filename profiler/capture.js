@@ -71,7 +71,7 @@ document.addEventListener('visibilitychange', () => { lastFrame = 0; });
 const Observer = window.PerformanceObserver;
 if (Observer) {
   for (const type of ['longtask', 'long-animation-frame']) {
-    if (!Observer.supportedEntryTypes.includes(type)) continue;
+    if (!(Observer.supportedEntryTypes || []).includes(type)) continue;
     new Observer(list => {
       for (const entry of list.getEntries()) {
         record('browser.' + type, entry.duration);

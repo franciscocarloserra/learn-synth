@@ -83,7 +83,7 @@ function refreshImpl() {
 function audioState() {
   const on = audio?.state === "running";
   $("power").classList.toggle("on", on);
-  $("audio-state").textContent = on ? "Audio ready" : "Audio idle";
+  $("audio-state").textContent = on ? "Audio ready" : "Enable audio";
 }
 function updateHeld() {
   heldDirty = true;
@@ -417,6 +417,7 @@ function drawImpl(now) {
   drawCards(now);
 }
 setAudioHooks({ notesChanged: updateHeld, stateChanged: audioState, ready: refreshLessons, error: (message) => $("audio-state").textContent = message });
+$("power").addEventListener("click", () => initAudio());
 NOTES.forEach((note, index) => {
   const b = document.createElement("button");
   b.className = "key";
@@ -425,12 +426,26 @@ NOTES.forEach((note, index) => {
   b.innerHTML = `<kbd>${note.key}</kbd><span></span>`;
   $("keyboard").insertBefore(b, $("transpose-buttons"));
   b.addEventListener("pointerdown", (e) => {
-    if (e.button !== 0)
+    if (e.pointerType === "touch" || e.button !== 0)
       return;
     e.preventDefault();
-    b.setPointerCapture(e.pointerId);
+    if (b.setPointerCapture) b.setPointerCapture(e.pointerId);
     noteOn(index, "pointer-" + e.pointerId);
   });
+  // Touch handlers keep AudioContext activation inside a native touch gesture.
+  // Ignore touch pointerdown above to avoid double-triggering the same note.
+  b.addEventListener("touchstart", (event) => {
+    event.preventDefault();
+    for (const touch of event.changedTouches)
+      noteOn(index, "touch-" + touch.identifier);
+  }, { passive: false });
+  for (const type of ["touchend", "touchcancel"])
+    b.addEventListener(type, (event) => {
+      event.preventDefault();
+      if (type === "touchend" && audio && audio.state !== "running") initAudio();
+      for (const touch of event.changedTouches)
+        noteOff("touch-" + touch.identifier);
+    }, { passive: false });
   for (const event of ["pointerup", "pointercancel", "lostpointercapture"])
     b.addEventListener(event, (e) => noteOff("pointer-" + e.pointerId));
   b.addEventListener("keydown", (e) => {

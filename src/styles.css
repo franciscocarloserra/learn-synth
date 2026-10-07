@@ -173,3 +173,10 @@ header { display: grid; grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr
 }
 
 .header-links { display: flex; align-items: center; justify-self: center; white-space: nowrap; }
+
+button.power { border: 1px solid var(--line); border-radius: 5px; background: transparent; padding: 8px; min-height: 36px; }
+@media (max-width: 600px) {
+  header { grid-template-columns: 1fr; }
+  .header-links { justify-self: start; }
+  .header-right { min-width: 0; }
+}
