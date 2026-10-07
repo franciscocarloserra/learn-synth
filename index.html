@@ -14,9 +14,6 @@
    <nav class="header-links" aria-label="Project links">
    <a class="repo-link" href="https://github.com/franciscocarloserra/learn-synth" target="_blank" rel="noopener noreferrer" aria-label="Learn Synth on GitHub">GitHub ↗</a>
     <a class="repo-link" href="https://forms.gle/8HBLJtUQYRraEWfJ6" target="_blank" rel="noopener noreferrer">Contact ↗</a>
-    <button class="repo-link patch-button" id="save-patch" title="Download current patch as JSON">Save</button>
-    <button class="repo-link patch-button" id="open-patch" title="Load a patch JSON file">Open</button>
-    <input accept="application/json,.json" hidden id="patch-file" type="file">
    </nav>
    <div class="header-right">
     <label class="volume">
@@ -83,6 +80,11 @@
     </div>
    </div>
    <div class="toolbar">
+    <div aria-label="Patch file" class="patch-file">
+     <button class="patch-button" id="save-patch" title="Download current patch as JSON">Save</button>
+     <button class="patch-button" id="open-patch" title="Load a patch JSON file">Open</button>
+     <input accept="application/json,.json" hidden id="patch-file" type="file">
+    </div>
     <div aria-label="Presets" class="presets">
      <button class="preset" data-preset="basic">
       Basic

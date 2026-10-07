@@ -167,7 +167,9 @@ header { display: grid; grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr
 .header-right { justify-self: end; justify-content: flex-end; }
 .repo-link { justify-self: center; color: var(--muted); font-size: 11px; text-decoration: none; padding: 8px; }
 .repo-link:hover { color: var(--mint); }
-.patch-button { border: 0; background: none; cursor: pointer; font: inherit; font-size: 11px; }
+.patch-file { display: flex; justify-content: flex-end; gap: 4px; margin-bottom: 4px; }
+.patch-button { padding: 2px 8px; border: 1px solid #343d3e; border-radius: 4px; background: #1b2022; color: var(--muted); font-size: 10px; cursor: pointer; }
+.patch-button:hover { color: var(--mint); border-color: #74867d; }
 @media (max-width: 900px) {
   header { grid-template-columns: minmax(0, 1fr) auto; }
   .header-right { grid-column: 1 / -1; justify-self: stretch; justify-content: space-between; }
