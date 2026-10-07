@@ -506,6 +506,10 @@ function makeAdvancedEffects() {
   tracking.connect(filter.detune);
   tracking.start();
   stereoInput = nodeGain();
+  // Upmix mono to L/R before splitting; a splitter otherwise leaves R silent.
+  stereoInput.channelCount = 2;
+  stereoInput.channelCountMode = "explicit";
+  stereoInput.channelInterpretation = "speakers";
   const splitter = audio.createChannelSplitter(2), merger = audio.createChannelMerger(2), widthGains = [nodeGain(), nodeGain(0), nodeGain(0), nodeGain()];
   stereoInput.connect(splitter);
   splitter.connect(widthGains[0], 0);
