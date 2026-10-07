@@ -5,6 +5,8 @@
 A browser synth for learning by listening. Play with A–L, touch or MIDI;
 use the diagrams to see what each control does.
 
+![Learn Synth interface with keyboard, sequencers and synthesis controls](assets/screenshot.png)
+
 Serve this folder with any static HTTP server, for example:
 
 ```sh
