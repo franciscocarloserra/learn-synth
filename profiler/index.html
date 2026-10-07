@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Synth profiler</title>
+<link rel="stylesheet" href="../src/styles.css">
+<style>
+  main { max-width: 1100px; } a { color: var(--mint); }
+  p { color: var(--muted); line-height: 1.5; }
+  .results { overflow-x: auto; } table { width: 100%; border-collapse: collapse; font: 12px ui-monospace, monospace; }
+  th, td { padding: 8px; border-bottom: 1px solid var(--line); text-align: right; }
+  th:first-child, td:first-child { text-align: left; }
+  pre { white-space: pre-wrap; } input { max-width: 100%; }
+</style>
+<main>
+  <h1>Synth profiler</h1>
+  <p><a href="../?profile">Start a capture</a>, reproduce the lag, then click Export profile.
+     Open the downloaded JSON here. Nothing is uploaded.</p>
+  <input id="file" type="file" accept=".json,application/json" aria-label="Open profile">
+  <p id="status" role="status">Inclusive timings overlap. Gaps and dispatch delays are not CPU cost or hardware latency.</p>
+  <div class="results"><table>
+    <thead><tr><th>Module</th><th>Calls</th><th>Total ms</th><th>Mean ms</th><th>P95 ≤ ms</th><th>Max ms</th></tr></thead>
+    <tbody id="rows"></tbody>
+  </table></div>
+  <details><summary>Diagnostics</summary><pre id="diagnostics"></pre></details>
+</main>
+<script type="module">
+  import { summarize } from './report.js';
+  const MAX_FILE_BYTES = 5 * 1024 * 1024;
+  const rows = document.getElementById('rows');
+  const status = document.getElementById('status');
+  document.getElementById('file').addEventListener('change', async event => {
+    rows.replaceChildren();
+    document.getElementById('diagnostics').textContent = '';
+    const file = event.target.files[0];
+    if (!file) return;
+    try {
+      if (file.size > MAX_FILE_BYTES) throw new Error('File exceeds 5 MB.');
+      const capture = JSON.parse(await file.text());
+      const summary = summarize(capture);
+      for (const row of summary) {
+        const tr = document.createElement('tr');
+        for (const value of [row.name, row.count, row.totalMs.toFixed(2), row.meanMs.toFixed(3), row.p95, row.maxMs.toFixed(3)]) {
+          const td = document.createElement('td'); td.textContent = value; tr.append(td);
+        }
+        rows.append(tr);
+      }
+      status.textContent = `${capture.version} · ${capture.windows.length} windows. Inclusive timings overlap; gaps are not CPU cost.`;
+      document.getElementById('diagnostics').textContent = JSON.stringify(capture.diagnostics || [], null, 2);
+    } catch (error) { status.textContent = error.message; }
+  });
+</script>
+</html>

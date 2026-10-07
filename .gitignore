@@ -1,0 +1,4 @@
+todelete/
+__pycache__/
+*.py[cod]
+*.log

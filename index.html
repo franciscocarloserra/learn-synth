@@ -1,0 +1,1807 @@
+<!DOCTYPE html>
+<html lang="en">
+ <meta charset="utf-8"/>
+ <meta content="width=device-width,initial-scale=1" name="viewport"/>
+ <title>
+  Learn Synth Fundamentals
+ </title>
+ <link href="src/styles.css" rel="stylesheet"/>
+ <main>
+  <header>
+   <h1>
+    Learn Synth Fundamentals
+   </h1>
+   <a class="repo-link" href="https://github.com/franciscocarloserra/learn-synth" target="_blank" rel="noopener noreferrer" aria-label="Learn Synth on GitHub">GitHub ↗</a>
+   <div class="header-right">
+    <label class="volume">
+     Volume
+     <input aria-label="Volume" id="volume" max="70" min="0" type="range" value="25"/>
+    </label>
+    <button class="mute" id="global-mute" type="button" aria-pressed="false" title="Mute output and stop all notes" aria-label="Mute output and stop all notes">Mute</button>
+    <div class="power" id="power">
+     <span class="dot">
+     </span>
+     <span id="audio-state">
+      Audio idle
+     </span>
+    </div>
+    <button aria-label="Enable MIDI keyboard" aria-pressed="false" class="midi" id="midi" title="Enable MIDI keyboard">
+     🎹
+    </button>
+   </div>
+  </header>
+  <div class="sticky-rack" id="sticky-rack">
+   <div class="outputs">
+    <div class="scope" id="wave-panel">
+     <div class="scope-top">
+      <span>
+       WAVE
+      </span>
+      <span id="note-display">
+       —
+      </span>
+     </div>
+     <canvas aria-label="Output waveform" id="scope">
+     </canvas>
+     <div class="scope-bottom">
+      <span id="scope-state">
+       Play a note
+      </span>
+      <span>
+       20 ms · ×6
+      </span>
+     </div>
+    </div>
+    <div class="scope" id="spectrum-panel">
+     <div class="scope-top">
+      <span>
+       SPECTRUM
+      </span>
+      <span>
+       Output
+      </span>
+     </div>
+     <canvas aria-label="Output frequency spectrum" id="spectrum">
+     </canvas>
+     <div class="scope-bottom">
+      <span>
+       60 Hz
+      </span>
+      <span>
+       1 kHz
+      </span>
+      <span>
+       16 kHz
+      </span>
+     </div>
+    </div>
+   </div>
+   <div class="toolbar">
+    <div aria-label="Presets" class="presets">
+     <button class="preset" data-preset="basic">
+      Basic
+     </button>
+     <button class="preset" data-preset="pad">
+      Warm pad
+     </button>
+     <button class="preset" data-preset="bass">
+      Machine bass
+     </button>
+     <button class="preset" data-preset="pluck">
+      Pluck
+     </button>
+     <button class="preset" data-preset="drift">
+      Slow drift
+     </button>
+     <button class="preset" data-preset="lead">
+      Soft lead
+     </button>
+     <button class="preset" data-preset="keys">
+      Soft keys
+     </button>
+     <button class="preset" data-preset="brass">
+      Brass
+     </button>
+     <button class="preset" data-preset="strings">
+      Strings
+     </button>
+     <button class="preset" data-preset="organ">
+      Organ
+     </button>
+     <button class="preset" data-preset="space">
+      Space pluck
+     </button>
+     <button class="preset" data-preset="acid">
+      Acid bass
+     </button>
+     <button class="preset" data-preset="glass">
+      Glass
+     </button>
+    </div>
+   </div>
+   <div aria-label="Musical notes" class="keyboard" id="keyboard">
+    <div class="transpose-buttons" id="transpose-buttons">
+     <button aria-label="Transpose up one semitone" id="transpose-up" title="Up one semitone">
+      +
+     </button>
+     <button aria-label="Transpose down one semitone" id="transpose-down" title="Down one semitone">
+      −
+     </button>
+    </div>
+   </div>
+  </div>
+  <div class="transport-controls" id="transport-controls">
+   <section aria-label="Arpeggiator" class="module transport-module" data-card="arp" id="lesson-arp">
+    <div class="module-title">
+     <span class="module-name">
+     Arpeggiator</span>
+
+     <button aria-controls="help-arp" aria-expanded="false" aria-label="Explain Arpeggiator" class="question" data-help="arp">
+      ?
+     </button>
+    </div>
+    <button aria-pressed="false" class="live-view" data-listen="arp">
+     <canvas aria-label="Arpeggiator parameter diagram" id="live-arp">
+     </canvas>
+     <span class="listen-label">
+      ▶ Listen
+     </span>
+    </button>
+    <div class="card-controls" id="controls-arp">
+     <div class="choices">
+      <button aria-pressed="false" data-choice="arpMode" data-value="0">
+       Off
+      </button>
+      <button aria-pressed="false" data-choice="arpMode" data-value="1">
+       Up
+      </button>
+      <button aria-pressed="false" data-choice="arpMode" data-value="2">
+       Down
+      </button>
+     </div>
+     <div class="control">
+      <label class="label" for="adv-tempo">
+       Tempo
+       <output id="adv-tempo-label">
+       </output>
+      </label>
+      <input data-advanced="tempo" id="adv-tempo" max="180" min="40" step="1" type="range"/>
+     </div>
+    </div>
+    <div class="card-help" hidden="" id="help-arp">
+     <p>
+      An arpeggiator plays your held notes one at a time. Up and Down choose their order.
+     </p>
+     <p>
+      Hold a chord on MIDI or A–L. Tempo is shared with both sequencers; each step is an eighth note. Release the chord to stop.
+     </p>
+    </div>
+   </section>
+   <section aria-label="Step Sequencer" class="module transport-module" data-card="stepseq" id="lesson-stepseq">
+    <div class="module-title">
+     <span class="module-name">
+     Step Sequencer</span>
+
+     <button aria-controls="help-stepseq" aria-expanded="false" aria-label="Explain Step Sequencer" class="question" data-help="stepseq">
+      ?
+     </button>
+    </div>
+    <button aria-pressed="false" class="live-view" data-listen="stepseq">
+     <canvas aria-label="Step Sequencer parameter diagram" id="live-stepseq">
+     </canvas>
+     <span class="listen-label">
+      ▶ Listen
+     </span>
+    </button>
+    <div class="card-controls" id="controls-stepseq">
+     <div class="choices">
+      <button aria-pressed="false" data-choice="stepOn" data-value="0">
+       Off
+      </button>
+      <button aria-pressed="false" data-choice="stepOn" data-value="1">
+       On
+      </button>
+     </div>
+     <div class="control">
+      <label class="label" for="adv-step0">
+       Step 1
+       <output id="adv-step0-label">
+       </output>
+      </label>
+      <input data-advanced="step0" id="adv-step0" max="12" min="-12" step="1" type="range"/>
+     </div>
+     <div class="control">
+      <label class="label" for="adv-step1">
+       Step 2
+       <output id="adv-step1-label">
+       </output>
+      </label>
+      <input data-advanced="step1" id="adv-step1" max="12" min="-12" step="1" type="range"/>
+     </div>
+     <div class="control">
+      <label class="label" for="adv-step2">
+       Step 3
+       <output id="adv-step2-label">
+       </output>
+      </label>
+      <input data-advanced="step2" id="adv-step2" max="12" min="-12" step="1" type="range"/>
+     </div>
+     <div class="control">
+      <label class="label" for="adv-step3">
+       Step 4
+       <output id="adv-step3-label">
+       </output>
+      </label>
+      <input data-advanced="step3" id="adv-step3" max="12" min="-12" step="1" type="range"/>
+     </div>
+    </div>
+    <div class="card-help" hidden="" id="help-stepseq">
+     <p>
+      A step sequencer plays a pattern without holding keys. These four steps are semitone offsets from C3.
+     </p>
+     <p>
+      Enable it and edit the steps. It shares the arpeggiator’s Tempo. Transpose shifts the whole pattern; leaving the page stops playback.
+     </p>
+    </div>
+   </section>
+   <section aria-label="Gate Sequencer" class="module transport-module" data-card="gateseq" id="lesson-gateseq">
+    <div class="module-title">
+     <span class="module-name">
+     Gate Sequencer</span>
+
+     <button aria-controls="help-gateseq" aria-expanded="false" aria-label="Explain Gate Sequencer" class="question" data-help="gateseq">
+      ?
+     </button>
+    </div>
+    <button aria-pressed="false" class="live-view" data-listen="gateseq">
+     <canvas aria-label="Gate Sequencer parameter diagram" id="live-gateseq">
+     </canvas>
+     <span class="listen-label">
+      ▶ Listen
+     </span>
+    </button>
+    <div class="card-controls" id="controls-gateseq">
+     <div class="choices">
+      <button aria-pressed="false" data-choice="gateOn" data-value="0">
+       Off
+      </button>
+      <button aria-pressed="false" data-choice="gateOn" data-value="1">
+       On
+      </button>
+     </div>
+     <div class="gate-steps">
+      <button aria-pressed="true" data-gate="0">
+       1
+      </button>
+      <button aria-pressed="true" data-gate="1">
+       2
+      </button>
+      <button aria-pressed="true" data-gate="2">
+       3
+      </button>
+      <button aria-pressed="true" data-gate="3">
+       4
+      </button>
+      <button aria-pressed="true" data-gate="4">
+       5
+      </button>
+      <button aria-pressed="true" data-gate="5">
+       6
+      </button>
+      <button aria-pressed="true" data-gate="6">
+       7
+      </button>
+      <button aria-pressed="true" data-gate="7">
+       8
+      </button>
+     </div>
+    </div>
+    <div class="card-help" hidden="" id="help-gateseq">
+     <p>
+      A gate sequencer rhythmically opens and closes the volume. It changes the rhythm, not the notes.
+     </p>
+     <p>
+      Hold a note, enable the gate and toggle steps. Lit steps let sound through. Tempo is shared with the arpeggiator.
+     </p>
+    </div>
+   </section>
+  </div>
+  <div class="chain">
+   <section aria-label="Oscillator" class="module" data-card="oscillator" id="lesson-oscillator">
+    <div class="module-title">
+     <span class="module-name"><span class="number">01</span>
+     Oscillator</span>
+     <span class="module-actions"><button class="isolate" data-isolate="oscillator" aria-label="Isolate oscillator module" aria-pressed="false" type="button">Isolate</button><button class="mute" data-mute="oscillator" aria-pressed="false" type="button" aria-label="Mute oscillator module">Mute</button></span>
+     <button aria-controls="help-oscillator" aria-expanded="false" aria-label="Explain Oscillator" class="question" data-help="oscillator">
+      ?
+     </button>
+    </div>
+    <button aria-label="Play or stop a note for Oscillator" aria-pressed="false" class="live-view" data-listen="oscillator">
+     <canvas aria-label="Live Oscillator visualization" id="live-oscillator">
+     </canvas>
+     <span class="listen-label">
+      ▶ Listen
+     </span>
+    </button>
+    <div class="card-controls" id="controls-oscillator">
+     <div aria-label="Waveform" class="waves">
+      <button class="wave" data-wave="sine">
+       <svg viewBox="0 0 40 24">
+        <path d="M1 12C7-2 13-2 20 12S33 26 39 12">
+        </path>
+       </svg>
+       Sine
+      </button>
+      <button class="wave" data-wave="sawtooth">
+       <svg viewBox="0 0 40 24">
+        <path d="M1 20L19 4V20L38 4V20">
+        </path>
+       </svg>
+       Saw
+      </button>
+      <button class="wave" data-wave="triangle">
+       <svg viewBox="0 0 40 24">
+        <path d="M1 12L10 3L29 21L39 12">
+        </path>
+       </svg>
+       Triangle
+      </button>
+      <button class="wave" data-wave="square">
+       <svg viewBox="0 0 40 24">
+        <path d="M1 20V4H20V20H39V4">
+        </path>
+       </svg>
+       Square
+      </button>
+     </div>
+     <div class="label">
+      <span>
+       Octave
+      </span>
+      <output id="octave-label">
+       0
+      </output>
+     </div>
+     <div aria-label="Octave" class="octaves">
+      <button data-octave="-2">
+       −2
+      </button>
+      <button data-octave="-1">
+       −1
+      </button>
+      <button data-octave="0">
+       0
+      </button>
+      <button data-octave="1">
+       +1
+      </button>
+      <button data-octave="2">
+       +2
+      </button>
+     </div>
+    </div>
+    <div class="card-help" hidden="" id="help-oscillator">
+     <p>
+      The oscillator repeats a wave to create a note. Sine sounds pure; Saw and Square sound brighter because they contain more harmonics.
+     </p>
+     <p>
+      Hold a note and switch waves. Octave doubles or halves the frequency. The diagram shows the selected wave shape.
+     </p>
+    </div>
+   </section>
+   <section aria-label="Pitch" class="module" data-card="pitch" id="lesson-pitch">
+    <div class="module-title">
+     <span class="module-name"><span class="number">02</span>
+     Pitch</span>
+     <span class="module-actions"><button class="isolate" data-isolate="pitch" aria-label="Isolate pitch module" aria-pressed="false" type="button">Isolate</button><button class="mute" data-mute="pitch" aria-pressed="false" type="button" aria-label="Mute pitch module">Mute</button></span>
+     <button aria-controls="help-pitch" aria-expanded="false" aria-label="Explain Pitch" class="question" data-help="pitch">
+      ?
+     </button>
+    </div>
+    <button aria-pressed="false" class="live-view" data-listen="pitch">
+     <canvas aria-label="Live note frequency" id="live-pitch">
+     </canvas>
+     <span class="listen-label">
+      ▶ Listen
+     </span>
+    </button>
+    <div class="card-controls" id="controls-pitch">
+     <div class="control">
+      <label class="label" for="transpose">
+       Transpose
+       <output id="transpose-label">
+       </output>
+      </label>
+      <input id="transpose" max="12" min="-12" step="1" type="range"/>
+     </div>
+    </div>
+    <div class="card-help" hidden="" id="help-pitch">
+     <p>
+      Pitch is how high or low a note sounds. Faster vibration means a higher note.
+     </p>
+     <p>
+      Each step is a semitone. +12 doubles the frequency: one octave up. The display follows the latest held note, or C3 when idle.
+     </p>
+    </div>
+   </section>
+   <section aria-label="Filter" class="module" data-card="cutoff" id="lesson-cutoff">
+    <div class="module-title">
+     <span class="module-name"><span class="number">03</span>
+     Filter</span>
+     <span class="module-actions"><button class="isolate" data-isolate="cutoff" aria-label="Isolate cutoff module" aria-pressed="false" type="button">Isolate</button><button class="mute" data-mute="cutoff" aria-pressed="false" type="button" aria-label="Mute cutoff module">Mute</button></span>
+     <button aria-controls="help-cutoff" aria-expanded="false" aria-label="Explain Filter" class="question" data-help="cutoff">
+      ?
+     </button>
+    </div>
+    <button aria-label="Play or stop a note for Filter" aria-pressed="false" class="live-view" data-listen="cutoff">
+     <canvas aria-label="Live Filter visualization" id="live-cutoff">
+     </canvas>
+     <span class="listen-label">
+      ▶ Listen
+     </span>
+    </button>
+    <div class="card-controls" id="controls-cutoff">
+     <div aria-label="Filter type" class="choices">
+      <button data-filter="lowpass">
+       Low-pass
+      </button>
+      <button data-filter="highpass">
+       High-pass
+      </button>
+      <button data-filter="bandpass">
+       Band-pass
+      </button>
+     </div>
+     <div class="control">
+      <label class="label" for="cutoff">
+       Cutoff
+       <output id="cutoff-label">
+       </output>
+      </label>
+      <input id="cutoff" max="1000" min="0" step="1" type="range"/>
+     </div>
+     <div class="control">
+      <label class="label" for="res">
+       Resonance
+       <output id="res-label">
+       </output>
+      </label>
+      <input id="res" max="12" min="0.1" step="0.1" type="range"/>
+     </div>
+    </div>
+    <div class="card-help" hidden="" id="help-cutoff">
+     <p id="filter-explanation">
+      Low-pass keeps lows and softens highs. Lower the cutoff to make the sound darker.
+     </p>
+     <p>
+      Cutoff sets where the filter starts reducing frequencies. Resonance adds a peak near that point.
+     </p>
+     <p>
+      Choose Saw and lower Cutoff to remove brightness. Switch modes to keep the lows, highs or a narrow band. The curve shows which frequencies pass through.
+     </p>
+     <svg aria-label="Filter response" class="diagram" preserveAspectRatio="none" role="img" viewBox="0 0 280 70">
+      <path class="grid" d="M0 20H280M0 60H280M70 0V70M140 0V70M210 0V70">
+      </path>
+      <path class="curve" id="filter-curve">
+      </path>
+     </svg>
+    </div>
+   </section>
+   <section aria-label="Envelope" class="module" data-card="envelope" id="lesson-envelope">
+    <div class="module-title">
+     <span class="module-name"><span class="number">04</span>
+     Envelope</span>
+     <span class="module-actions"><button class="isolate" data-isolate="envelope" aria-label="Isolate envelope module" aria-pressed="false" type="button">Isolate</button><button class="mute" data-mute="envelope" aria-pressed="false" type="button" aria-label="Mute envelope module">Mute</button></span>
+     <button aria-controls="help-envelope" aria-expanded="false" aria-label="Explain Envelope" class="question" data-help="envelope">
+      ?
+     </button>
+    </div>
+    <button aria-label="Play or stop a note for Envelope" aria-pressed="false" class="live-view" data-listen="envelope">
+     <canvas aria-label="Live Envelope visualization" id="live-envelope">
+     </canvas>
+     <span class="listen-label">
+      ▶ Listen
+     </span>
+    </button>
+    <div class="card-controls" id="controls-envelope">
+     <div class="control">
+      <label class="label" for="attack">
+       Attack
+       <output id="attack-label">
+       </output>
+      </label>
+      <input id="attack" max="1.5" min="0.005" step="0.005" type="range"/>
+     </div>
+     <div class="control">
+      <label class="label" for="adv-ampDecay">
+       Decay
+       <output id="adv-ampDecay-label">
+       </output>
+      </label>
+      <input data-advanced="ampDecay" id="adv-ampDecay" max="2" min="0.01" step="0.01" type="range"/>
+     </div>
+     <div class="control">
+      <label class="label" for="adv-sustain">
+       Sustain
+       <output id="adv-sustain-label">
+       </output>
+      </label>
+      <input data-advanced="sustain" id="adv-sustain" max="100" min="0" step="1" type="range"/>
+     </div>
+     <div class="control">
+      <label class="label" for="release">
+       Release
+       <output id="release-label">
+       </output>
+      </label>
+      <input id="release" max="2" min="0.03" step="0.01" type="range"/>
+     </div>
+    </div>
+    <div class="card-help" hidden="" id="help-envelope">
+     <p>
+      Attack fades in. Decay falls from the peak to Sustain, the level held while you press the key. Release fades out after you let go.
+     </p>
+     <p>
+      Try short Attack, long Decay and low Sustain for a pluck. These timing changes apply to the next note.
+     </p>
+    </div>
+   </section>
+   <section aria-label="Voice Mode" class="module" data-card="voicemode" id="lesson-voicemode">
+    <div class="module-title">
+     <span class="module-name"><span class="number">05</span>
+     Voice Mode</span>
+     <span class="module-actions"><button class="isolate" data-isolate="voicemode" aria-label="Isolate voicemode module" aria-pressed="false" type="button">Isolate</button><button class="mute" data-mute="voicemode" aria-pressed="false" type="button" aria-label="Mute voicemode module">Mute</button></span>
+     <button aria-controls="help-voicemode" aria-expanded="false" aria-label="Explain Voice Mode" class="question" data-help="voicemode">
+      ?
+     </button>
+    </div>
+    <button aria-pressed="false" class="live-view" data-listen="voicemode">
+     <canvas aria-label="Voice Mode parameter diagram" id="live-voicemode">
+     </canvas>
+     <span class="listen-label">
+      ▶ Listen
+     </span>
+    </button>
+    <div class="card-controls" id="controls-voicemode">
+     <div class="choices">
+      <button aria-pressed="false" data-choice="voiceMode" data-value="0">
+       Poly
+      </button>
+      <button aria-pressed="false" data-choice="voiceMode" data-value="1">
+       Mono
+      </button>
+      <button aria-pressed="false" data-choice="voiceMode" data-value="2">
+       Legato
+      </button>
+     </div>
+    </div>
+    <div class="card-help" hidden="" id="help-voicemode">
+     <p>
+      Poly plays chords. Mono plays only the latest key. Legato changes the note without restarting its envelope while keys overlap.
+     </p>
+     <p>
+      Hold one key and add another. Release the latest key to return to the previous one. Glide controls the slide between pitches.
+     </p>
+    </div>
+   </section>
+   <section aria-label="Sub" class="module" data-card="sub" id="lesson-sub">
+    <div class="module-title">
+     <span class="module-name"><span class="number">06</span>
+     Sub</span>
+     <span class="module-actions"><button class="isolate" data-isolate="sub" aria-label="Isolate sub module" aria-pressed="false" type="button">Isolate</button><button class="mute" data-mute="sub" aria-pressed="false" type="button" aria-label="Mute sub module">Mute</button></span>
+     <button aria-controls="help-sub" aria-expanded="false" aria-label="Explain Sub" class="question" data-help="sub">
+      ?
+     </button>
+    </div>
+    <button aria-label="Play or stop a note for Sub" aria-pressed="false" class="live-view" data-listen="sub">
+     <canvas aria-label="Sub parameter diagram" id="live-sub">
+     </canvas>
+     <span class="listen-label">
+      ▶ Listen
+     </span>
+    </button>
+    <div class="card-controls" id="controls-sub">
+     <div class="control">
+      <label class="label" for="sub">
+       Level
+       <output id="sub-label">
+       </output>
+      </label>
+      <input id="sub" max="100" min="0" step="1" type="range"/>
+     </div>
+    </div>
+    <div class="card-help" hidden="" id="help-sub">
+     <p>
+      A sub oscillator adds a sine wave one octave below the note. It adds weight without adding much brightness.
+     </p>
+     <p>
+      Raise Level on a bass note. The lower wave completes one cycle for every two cycles of the main oscillator.
+     </p>
+    </div>
+   </section>
+   <section aria-label="Velocity" class="module" data-card="velocity" id="lesson-velocity">
+    <div class="module-title">
+     <span class="module-name"><span class="number">07</span>
+     Velocity</span>
+     <span class="module-actions"><button class="isolate" data-isolate="velocity" aria-label="Isolate velocity module" aria-pressed="false" type="button">Isolate</button><button class="mute" data-mute="velocity" aria-pressed="false" type="button" aria-label="Mute velocity module">Mute</button></span>
+     <button aria-controls="help-velocity" aria-expanded="false" aria-label="Explain Velocity" class="question" data-help="velocity">
+      ?
+     </button>
+    </div>
+    <button aria-pressed="false" class="live-view" data-listen="velocity">
+     <canvas aria-label="Velocity parameter diagram" id="live-velocity">
+     </canvas>
+     <span class="listen-label">
+      ▶ Listen
+     </span>
+    </button>
+    <div class="card-controls" id="controls-velocity">
+     <div class="control">
+      <label class="label" for="adv-velocitySense">
+       Response
+       <output id="adv-velocitySense-label">
+       </output>
+      </label>
+      <input data-advanced="velocitySense" id="adv-velocitySense" max="100" min="0" step="1" type="range"/>
+     </div>
+    </div>
+    <div class="card-help" hidden="" id="help-velocity">
+     <p>
+      Velocity is how hard you strike a MIDI key. Response sets how strongly it affects loudness.
+     </p>
+     <p>
+      At zero, soft and hard strikes are equally loud. At 100%, soft strikes are quiet. Listen plays a soft test note.
+     </p>
+    </div>
+   </section>
+   <section aria-label="Glide" class="module" data-card="glide" id="lesson-glide">
+    <div class="module-title">
+     <span class="module-name"><span class="number">08</span>
+     Glide</span>
+     <span class="module-actions"><button class="isolate" data-isolate="glide" aria-label="Isolate glide module" aria-pressed="false" type="button">Isolate</button><button class="mute" data-mute="glide" aria-pressed="false" type="button" aria-label="Mute glide module">Mute</button></span>
+     <button aria-controls="help-glide" aria-expanded="false" aria-label="Explain Glide" class="question" data-help="glide">
+      ?
+     </button>
+    </div>
+    <button aria-label="Play or stop a note for Glide" aria-pressed="false" class="live-view" data-listen="glide">
+     <canvas aria-label="Glide parameter diagram" id="live-glide">
+     </canvas>
+     <span class="listen-label">
+      ▶ Listen
+     </span>
+    </button>
+    <div class="card-controls" id="controls-glide">
+     <div class="control">
+      <label class="label" for="glide">
+       Time
+       <output id="glide-label">
+       </output>
+      </label>
+      <input id="glide" max="0.8" min="0" step="0.01" type="range"/>
+     </div>
+    </div>
+    <div class="card-help" hidden="" id="help-glide">
+     <p>
+      Glide slides between pitches instead of jumping straight to the next note. It is also called portamento.
+     </p>
+     <p>
+      Raise Time and play two different notes. Each new note slides from the previous note’s pitch; you can still play chords.
+     </p>
+    </div>
+   </section>
+   <section aria-label="Layers" class="module" data-card="layers" id="lesson-layers">
+    <div class="module-title">
+     <span class="module-name"><span class="number">09</span>
+     Layers</span>
+     <span class="module-actions"><button class="isolate" data-isolate="layers" aria-label="Isolate layers module" aria-pressed="false" type="button">Isolate</button><button class="mute" data-mute="layers" aria-pressed="false" type="button" aria-label="Mute layers module">Mute</button></span>
+     <button aria-controls="help-layers" aria-expanded="false" aria-label="Explain Layers" class="question" data-help="layers">
+      ?
+     </button>
+    </div>
+    <button aria-label="Play or stop a note for Layers" aria-pressed="false" class="live-view" data-listen="layers">
+     <canvas aria-label="Live Layers visualization" id="live-layers">
+     </canvas>
+     <span class="listen-label">
+      ▶ Listen
+     </span>
+    </button>
+    <div class="card-controls" id="controls-layers">
+     <div aria-label="Layer waveform" class="choices">
+      <button data-layer="sine">
+       Sine
+      </button>
+      <button data-layer="sawtooth">
+       Saw
+      </button>
+      <button data-layer="triangle">
+       Triangle
+      </button>
+      <button data-layer="square">
+       Square
+      </button>
+     </div>
+     <div class="control">
+      <label class="label" for="layerMix">
+       Layer level
+       <output id="layerMix-label">
+       </output>
+      </label>
+      <input id="layerMix" max="100" min="0" step="1" type="range" value="0"/>
+     </div>
+     <div class="control">
+      <label class="label" for="detune">
+       Detune
+       <output id="detune-label">
+       </output>
+      </label>
+      <input id="detune" max="30" min="0" step="1" type="range" value="7"/>
+     </div>
+    </div>
+    <div class="card-help" hidden="" id="help-layers">
+     <p>
+      A layer adds a second wave to the same note. Both waves share the filter and envelope.
+     </p>
+     <p>
+      Start with Basic. Raise Layer level to 100% for an equal mix. Add Detune: the waves drift in and out of step, creating a pulse. More detune makes it faster.
+     </p>
+     <svg aria-label="Two waves and their sum" role="img" viewBox="0 0 320 115">
+      <path id="layer-base" style="stroke:var(--accent)">
+      </path>
+      <path id="layer-second" style="opacity:.55">
+      </path>
+      <path id="layer-sum">
+      </path>
+      <text x="0" y="110">
+       Base + layer = mix
+      </text>
+     </svg>
+     <p>
+      The three lines show the base, second layer and their sum. Detune is exaggerated so you can see it.
+     </p>
+    </div>
+   </section>
+   <section aria-label="Unison" class="module" data-card="unison" id="lesson-unison">
+    <div class="module-title">
+     <span class="module-name"><span class="number">10</span>
+     Unison</span>
+     <span class="module-actions"><button class="isolate" data-isolate="unison" aria-label="Isolate unison module" aria-pressed="false" type="button">Isolate</button><button class="mute" data-mute="unison" aria-pressed="false" type="button" aria-label="Mute unison module">Mute</button></span>
+     <button aria-controls="help-unison" aria-expanded="false" aria-label="Explain Unison" class="question" data-help="unison">
+      ?
+     </button>
+    </div>
+    <button aria-label="Play or stop a note for Unison" aria-pressed="false" class="live-view" data-listen="unison">
+     <canvas aria-label="Unison parameter diagram" id="live-unison">
+     </canvas>
+     <span class="listen-label">
+      ▶ Listen
+     </span>
+    </button>
+    <div class="card-controls" id="controls-unison">
+     <div class="control">
+      <label class="label" for="unison">
+       Amount
+       <output id="unison-label">
+       </output>
+      </label>
+      <input id="unison" max="100" min="0" step="1" type="range"/>
+     </div>
+     <div class="control">
+      <label class="label" for="spread">
+       Spread
+       <output id="spread-label">
+       </output>
+      </label>
+      <input id="spread" max="30" min="0" step="1" type="range"/>
+     </div>
+    </div>
+    <div class="card-help" hidden="" id="help-unison">
+     <p>
+      Unison adds two copies of the main oscillator, tuned slightly below and above it. Together they make a thicker sound.
+     </p>
+     <p>
+      Raise Amount, then Spread. The three waves slowly drift apart. Unlike Layers, all three use the same waveform.
+     </p>
+    </div>
+   </section>
+   <section aria-label="Filter Envelope" class="module" data-card="filterenv" id="lesson-filterenv">
+    <div class="module-title">
+     <span class="module-name"><span class="number">11</span>
+     Filter Envelope</span>
+     <span class="module-actions"><button class="isolate" data-isolate="filterenv" aria-label="Isolate filterenv module" aria-pressed="false" type="button">Isolate</button><button class="mute" data-mute="filterenv" aria-pressed="false" type="button" aria-label="Mute filterenv module">Mute</button></span>
+     <button aria-controls="help-filterenv" aria-expanded="false" aria-label="Explain Filter Envelope" class="question" data-help="filterenv">
+      ?
+     </button>
+    </div>
+    <button aria-label="Play or stop a note for Filter Envelope" aria-pressed="false" class="live-view" data-listen="filterenv">
+     <canvas aria-label="Filter Envelope parameter diagram" id="live-filterenv">
+     </canvas>
+     <span class="listen-label">
+      ▶ Listen
+     </span>
+    </button>
+    <div class="card-controls" id="controls-filterenv">
+     <div class="control">
+      <label class="label" for="filterEnv">
+       Amount
+       <output id="filterEnv-label">
+       </output>
+      </label>
+      <input id="filterEnv" max="36" min="0" step="1" type="range"/>
+     </div>
+     <div class="control">
+      <label class="label" for="filterDecay">
+       Decay
+       <output id="filterDecay-label">
+       </output>
+      </label>
+      <input id="filterDecay" max="2" min="0.05" step="0.01" type="range"/>
+     </div>
+    </div>
+    <div class="card-help" hidden="" id="help-filterenv">
+     <p>
+      A filter envelope moves the cutoff automatically when a note starts. It can make a bright attack that quickly becomes darker.
+     </p>
+     <p>
+      Choose Saw, lower Cutoff, then raise Amount. Decay sets how fast the filter returns. Each new note restarts this shared filter envelope.
+     </p>
+    </div>
+   </section>
+   <section aria-label="LFO · vibrato" class="module" data-card="lfo" id="lesson-lfo">
+    <div class="module-title">
+     <span class="module-name"><span class="number">12</span>
+     LFO · vibrato</span>
+     <span class="module-actions"><button class="isolate" data-isolate="lfo" aria-label="Isolate lfo module" aria-pressed="false" type="button">Isolate</button><button class="mute" data-mute="lfo" aria-pressed="false" type="button" aria-label="Mute lfo module">Mute</button></span>
+     <button aria-controls="help-lfo" aria-expanded="false" aria-label="Explain LFO · vibrato" class="question" data-help="lfo">
+      ?
+     </button>
+    </div>
+    <button aria-label="Play or stop a note for LFO · vibrato" aria-pressed="false" class="live-view" data-listen="lfo">
+     <canvas aria-label="Live LFO · vibrato visualization" id="live-lfo">
+     </canvas>
+     <span class="listen-label">
+      ▶ Listen
+     </span>
+    </button>
+    <div class="card-controls" id="controls-lfo">
+     <div class="control">
+      <label class="label" for="lfoDepth">
+       Depth
+       <output id="lfoDepth-label">
+       </output>
+      </label>
+      <input id="lfoDepth" max="60" min="0" step="1" type="range" value="0"/>
+     </div>
+     <div class="control">
+      <label class="label" for="lfoRate">
+       Speed
+       <output id="lfoRate-label">
+       </output>
+      </label>
+      <input id="lfoRate" max="10" min="0.2" step="0.1" type="range" value="3"/>
+     </div>
+    </div>
+    <div class="card-help" hidden="" id="help-lfo">
+     <p>
+      An LFO is a slow wave that moves a control. Here it moves pitch up and down: vibrato.
+     </p>
+     <p>
+      Try Depth at 30 cents and Speed at 2 Hz. Pitch wobbles twice a second. Depth sets how far; Speed sets how fast. Zero depth turns it off.
+     </p>
+     <svg aria-label="Pitch movement" role="img" viewBox="0 0 320 115">
+      <path class="guide" d="M0 47H320">
+      </path>
+      <path id="lfo-curve">
+      </path>
+      <circle fill="var(--accent)" id="lfo-dot" r="4">
+      </circle>
+      <text x="0" y="110">
+       Lower ↕ higher pitch
+      </text>
+     </svg>
+     <p>
+      The curve shows the chosen pitch movement, not an audio waveform. 100 cents is one semitone.
+     </p>
+    </div>
+   </section>
+   <section aria-label="Filter Tracking" class="module" data-card="tracking" id="lesson-tracking">
+    <div class="module-title">
+     <span class="module-name"><span class="number">13</span>
+     Filter Tracking</span>
+     <span class="module-actions"><button class="isolate" data-isolate="tracking" aria-label="Isolate tracking module" aria-pressed="false" type="button">Isolate</button><button class="mute" data-mute="tracking" aria-pressed="false" type="button" aria-label="Mute tracking module">Mute</button></span>
+     <button aria-controls="help-tracking" aria-expanded="false" aria-label="Explain Filter Tracking" class="question" data-help="tracking">
+      ?
+     </button>
+    </div>
+    <button aria-pressed="false" class="live-view" data-listen="tracking">
+     <canvas aria-label="Filter Tracking parameter diagram" id="live-tracking">
+     </canvas>
+     <span class="listen-label">
+      ▶ Listen
+     </span>
+    </button>
+    <div class="card-controls" id="controls-tracking">
+     <div class="control">
+      <label class="label" for="adv-keyTrack">
+       Amount
+       <output id="adv-keyTrack-label">
+       </output>
+      </label>
+      <input data-advanced="keyTrack" id="adv-keyTrack" max="100" min="0" step="1" type="range"/>
+     </div>
+    </div>
+    <div class="card-help" hidden="" id="help-tracking">
+     <p>
+      Tracking raises the filter cutoff as you play higher notes. It keeps their brightness more consistent.
+     </p>
+     <p>
+      At 100%, moving up an octave doubles the cutoff. C4 is the reference; the latest note moves the shared filter.
+     </p>
+    </div>
+   </section>
+   <section aria-label="Noise" class="module" data-card="noise" id="lesson-noise">
+    <div class="module-title">
+     <span class="module-name"><span class="number">14</span>
+     Noise</span>
+     <span class="module-actions"><button class="isolate" data-isolate="noise" aria-label="Isolate noise module" aria-pressed="false" type="button">Isolate</button><button class="mute" data-mute="noise" aria-pressed="false" type="button" aria-label="Mute noise module">Mute</button></span>
+     <button aria-controls="help-noise" aria-expanded="false" aria-label="Explain Noise" class="question" data-help="noise">
+      ?
+     </button>
+    </div>
+    <button aria-label="Play or stop a note for Noise" aria-pressed="false" class="live-view" data-listen="noise">
+     <canvas aria-label="Live Noise visualization" id="live-noise">
+     </canvas>
+     <span class="listen-label">
+      ▶ Listen
+     </span>
+    </button>
+    <div class="card-controls" id="controls-noise">
+     <div class="control">
+      <label class="label" for="noise">
+       Level
+       <output id="noise-label">
+       </output>
+      </label>
+      <input id="noise" max="100" min="0" step="1" type="range"/>
+     </div>
+    </div>
+    <div class="card-help" hidden="" id="help-noise">
+     <p>
+      Noise is random vibration, not a repeating note. It adds breath, hiss or a rough edge.
+     </p>
+     <p>
+      Raise Level while holding a note. The noise shares the note’s envelope and filter. More level makes the random waveform larger.
+     </p>
+    </div>
+   </section>
+   <section aria-label="Harmonics" class="module" data-card="harmonics" id="lesson-harmonics">
+    <div class="module-title">
+     <span class="module-name"><span class="number">15</span>
+     Harmonics</span>
+     <span class="module-actions"><button class="isolate" data-isolate="harmonics" aria-label="Isolate harmonics module" aria-pressed="false" type="button">Isolate</button><button class="mute" data-mute="harmonics" aria-pressed="false" type="button" aria-label="Mute harmonics module">Mute</button></span>
+     <button aria-controls="help-harmonics" aria-expanded="false" aria-label="Explain Harmonics" class="question" data-help="harmonics">
+      ?
+     </button>
+    </div>
+    <button aria-label="Play or stop a note for Harmonics" aria-pressed="false" class="live-view" data-listen="harmonics">
+     <canvas aria-label="Live Harmonics visualization" id="live-harmonics">
+     </canvas>
+     <span class="listen-label">
+      ▶ Listen
+     </span>
+    </button>
+    <div class="card-controls" id="controls-harmonics">
+     <div aria-label="Compare waves" class="choices">
+      <button data-wave="sine">
+       Sine
+      </button>
+      <button data-wave="sawtooth">
+       Saw
+      </button>
+      <button data-wave="triangle">
+       Triangle
+      </button>
+      <button data-wave="square">
+       Square
+      </button>
+     </div>
+    </div>
+    <div class="card-help" hidden="" id="help-harmonics">
+     <p>
+      A sine wave has one frequency. Other waves add harmonics: frequencies at 2×, 3× and more. These change the tone, not the note.
+     </p>
+     <p>
+      Listen to Sine, then Saw. Saw sounds brighter. Each bar shows one harmonic before the filter; taller means louder.
+     </p>
+     <svg aria-label="Harmonics before filtering" role="img" viewBox="0 0 320 115">
+      <path class="guide" d="M10 88H310">
+      </path>
+      <path id="harmonics-bars">
+      </path>
+      <text x="10" y="110">
+       Fundamental
+      </text>
+      <text x="207" y="110">
+       Higher frequencies →
+      </text>
+     </svg>
+     <p>
+      Each bar is one harmonic. Taller bars contribute more to the wave.
+     </p>
+    </div>
+   </section>
+   <section aria-label="Drive" class="module" data-card="drive" id="lesson-drive">
+    <div class="module-title">
+     <span class="module-name"><span class="number">16</span>
+     Drive</span>
+     <span class="module-actions"><button class="isolate" data-isolate="drive" aria-label="Isolate drive module" aria-pressed="false" type="button">Isolate</button><button class="mute" data-mute="drive" aria-pressed="false" type="button" aria-label="Mute drive module">Mute</button></span>
+     <button aria-controls="help-drive" aria-expanded="false" aria-label="Explain Drive" class="question" data-help="drive">
+      ?
+     </button>
+    </div>
+    <button aria-label="Play or stop a note for Drive" aria-pressed="false" class="live-view" data-listen="drive">
+     <canvas aria-label="Live Drive visualization" id="live-drive">
+     </canvas>
+     <span class="listen-label">
+      ▶ Listen
+     </span>
+    </button>
+    <div class="card-controls" id="controls-drive">
+     <div class="control">
+      <label class="label" for="drive">
+       Amount
+       <output id="drive-label">
+       </output>
+      </label>
+      <input id="drive" max="100" min="0" step="1" type="range"/>
+     </div>
+    </div>
+    <div class="card-help" hidden="" id="help-drive">
+     <p>
+      Drive bends the waveform and creates extra harmonics. A smooth sine becomes more buzzy.
+     </p>
+     <p>
+      Try Basic and raise Amount. The curve maps input to output: a flatter top means more distortion. Zero leaves the signal unchanged.
+     </p>
+    </div>
+   </section>
+   <section aria-label="Pan" class="module" data-card="pan" id="lesson-pan">
+    <div class="module-title">
+     <span class="module-name"><span class="number">17</span>
+     Pan</span>
+     <span class="module-actions"><button class="isolate" data-isolate="pan" aria-label="Isolate pan module" aria-pressed="false" type="button">Isolate</button><button class="mute" data-mute="pan" aria-pressed="false" type="button" aria-label="Mute pan module">Mute</button></span>
+     <button aria-controls="help-pan" aria-expanded="false" aria-label="Explain Pan" class="question" data-help="pan">
+      ?
+     </button>
+    </div>
+    <button aria-label="Play or stop a note for Pan" aria-pressed="false" class="live-view" data-listen="pan">
+     <canvas aria-label="Live Pan visualization" id="live-pan">
+     </canvas>
+     <span class="listen-label">
+      ▶ Listen
+     </span>
+    </button>
+    <div class="card-controls" id="controls-pan">
+     <div class="control">
+      <label class="label" for="pan">
+       Position
+       <output id="pan-label">
+       </output>
+      </label>
+      <input id="pan" max="100" min="-100" step="1" type="range"/>
+     </div>
+    </div>
+    <div class="card-help" hidden="" id="help-pan">
+     <p>
+      Pan places the sound between the left and right speakers. It does not change the note.
+     </p>
+     <p>
+      Use headphones and move Position. The dot shows where the sound sits between left and right. Zero is the center.
+     </p>
+    </div>
+   </section>
+   <section aria-label="Stereo Width" class="module" data-card="width" id="lesson-width">
+    <div class="module-title">
+     <span class="module-name"><span class="number">18</span>
+     Stereo Width</span>
+     <span class="module-actions"><button class="isolate" data-isolate="width" aria-label="Isolate width module" aria-pressed="false" type="button">Isolate</button><button class="mute" data-mute="width" aria-pressed="false" type="button" aria-label="Mute width module">Mute</button></span>
+     <button aria-controls="help-width" aria-expanded="false" aria-label="Explain Stereo Width" class="question" data-help="width">
+      ?
+     </button>
+    </div>
+    <button aria-pressed="false" class="live-view" data-listen="width">
+     <canvas aria-label="Stereo Width parameter diagram" id="live-width">
+     </canvas>
+     <span class="listen-label">
+      ▶ Listen
+     </span>
+    </button>
+    <div class="card-controls" id="controls-width">
+     <div class="control">
+      <label class="label" for="adv-width">
+       Width
+       <output id="adv-width-label">
+       </output>
+      </label>
+      <input data-advanced="width" id="adv-width" max="200" min="0" step="1" type="range"/>
+     </div>
+    </div>
+    <div class="card-help" hidden="" id="help-width">
+     <p>
+      Width changes the difference between left and right. Zero is mono; 100% keeps the original stereo image.
+     </p>
+     <p>
+      Try it with Reverb and headphones. A centered mono sound will not widen by itself. This is different from Pan, which moves the whole sound.
+     </p>
+    </div>
+   </section>
+   <section aria-label="Chorus" class="module" data-card="chorus" id="lesson-chorus">
+    <div class="module-title">
+     <span class="module-name"><span class="number">19</span>
+     Chorus</span>
+     <span class="module-actions"><button class="isolate" data-isolate="chorus" aria-label="Isolate chorus module" aria-pressed="false" type="button">Isolate</button><button class="mute" data-mute="chorus" aria-pressed="false" type="button" aria-label="Mute chorus module">Mute</button></span>
+     <button aria-controls="help-chorus" aria-expanded="false" aria-label="Explain Chorus" class="question" data-help="chorus">
+      ?
+     </button>
+    </div>
+    <button aria-label="Play or stop a note for Chorus" aria-pressed="false" class="live-view" data-listen="chorus">
+     <canvas aria-label="Chorus parameter diagram" id="live-chorus">
+     </canvas>
+     <span class="listen-label">
+      ▶ Listen
+     </span>
+    </button>
+    <div class="card-controls" id="controls-chorus">
+     <div class="control">
+      <label class="label" for="chorus">
+       Level
+       <output id="chorus-label">
+       </output>
+      </label>
+      <input id="chorus" max="60" min="0" step="1" type="range"/>
+     </div>
+     <div class="control">
+      <label class="label" for="chorusRate">
+       Speed
+       <output id="chorusRate-label">
+       </output>
+      </label>
+      <input id="chorusRate" max="3" min="0.2" step="0.1" type="range"/>
+     </div>
+    </div>
+    <div class="card-help" hidden="" id="help-chorus">
+     <p>
+      Chorus mixes in a slightly delayed copy whose timing moves slowly. This gives the sound a soft, wavering thickness.
+     </p>
+     <p>
+      Raise Level on a held note. Speed controls how quickly the short delay moves. Unlike Unison, Chorus works on the combined sound.
+     </p>
+    </div>
+   </section>
+   <section aria-label="Reverb" class="module" data-card="reverb" id="lesson-reverb">
+    <div class="module-title">
+     <span class="module-name"><span class="number">20</span>
+     Reverb</span>
+     <span class="module-actions"><button class="isolate" data-isolate="reverb" aria-label="Isolate reverb module" aria-pressed="false" type="button">Isolate</button><button class="mute" data-mute="reverb" aria-pressed="false" type="button" aria-label="Mute reverb module">Mute</button></span>
+     <button aria-controls="help-reverb" aria-expanded="false" aria-label="Explain Reverb" class="question" data-help="reverb">
+      ?
+     </button>
+    </div>
+    <button aria-label="Play or stop a note for Reverb" aria-pressed="false" class="live-view" data-listen="reverb">
+     <canvas aria-label="Reverb parameter diagram" id="live-reverb">
+     </canvas>
+     <span class="listen-label">
+      ▶ Listen
+     </span>
+    </button>
+    <div class="card-controls" id="controls-reverb">
+     <div class="control">
+      <label class="label" for="reverb">
+       Level
+       <output id="reverb-label">
+       </output>
+      </label>
+      <input id="reverb" max="60" min="0" step="1" type="range"/>
+     </div>
+    </div>
+    <div class="card-help" hidden="" id="help-reverb">
+     <p>
+      Reverb adds many tiny reflections that fade together, like sound in a room. Echo gives separate repeats; reverb gives a smooth tail.
+     </p>
+     <p>
+      Raise Level and play a short note. The shaded shape represents the room’s fading reflections, not the output waveform.
+     </p>
+    </div>
+   </section>
+   <section aria-label="Echo" class="module" data-card="echo" id="lesson-echo">
+    <div class="module-title">
+     <span class="module-name"><span class="number">21</span>
+     Echo</span>
+     <span class="module-actions"><button class="isolate" data-isolate="echo" aria-label="Isolate echo module" aria-pressed="false" type="button">Isolate</button><button class="mute" data-mute="echo" aria-pressed="false" type="button" aria-label="Mute echo module">Mute</button></span>
+     <button aria-controls="help-echo" aria-expanded="false" aria-label="Explain Echo" class="question" data-help="echo">
+      ?
+     </button>
+    </div>
+    <button aria-label="Play or stop a note for Echo" aria-pressed="false" class="live-view" data-listen="echo">
+     <canvas aria-label="Live Echo visualization" id="live-echo">
+     </canvas>
+     <span class="listen-label">
+      ▶ Listen
+     </span>
+    </button>
+    <div class="card-controls" id="controls-echo">
+     <div class="control">
+      <label class="label" for="echoMix">
+       Level
+       <output id="echoMix-label">
+       </output>
+      </label>
+      <input id="echoMix" max="60" min="0" step="1" type="range"/>
+     </div>
+     <div class="control">
+      <label class="label" for="echoTime">
+       Time
+       <output id="echoTime-label">
+       </output>
+      </label>
+      <input id="echoTime" max="1.5" min="0.03" step="0.01" type="range"/>
+     </div>
+    </div>
+    <div class="card-help" hidden="" id="help-echo">
+     <p>
+      Echo repeats the sound after a delay. Each repeat is quieter than the last.
+     </p>
+     <p>
+      Raise Level and play a short note. Time sets the gap between repeats. Each line is a repeat. Wider gaps mean more delay; taller lines mean louder echoes.
+     </p>
+    </div>
+   </section>
+   <section aria-label="Tremolo" class="module" data-card="tremolo" id="lesson-tremolo">
+    <div class="module-title">
+     <span class="module-name"><span class="number">22</span>
+     Tremolo</span>
+     <span class="module-actions"><button class="isolate" data-isolate="tremolo" aria-label="Isolate tremolo module" aria-pressed="false" type="button">Isolate</button><button class="mute" data-mute="tremolo" aria-pressed="false" type="button" aria-label="Mute tremolo module">Mute</button></span>
+     <button aria-controls="help-tremolo" aria-expanded="false" aria-label="Explain Tremolo" class="question" data-help="tremolo">
+      ?
+     </button>
+    </div>
+    <button aria-label="Play or stop a note for Tremolo" aria-pressed="false" class="live-view" data-listen="tremolo">
+     <canvas aria-label="Live Tremolo visualization" id="live-tremolo">
+     </canvas>
+     <span class="listen-label">
+      ▶ Listen
+     </span>
+    </button>
+    <div class="card-controls" id="controls-tremolo">
+     <div class="control">
+      <label class="label" for="tremDepth">
+       Depth
+       <output id="tremDepth-label">
+       </output>
+      </label>
+      <input id="tremDepth" max="100" min="0" step="1" type="range"/>
+     </div>
+     <div class="control">
+      <label class="label" for="tremRate">
+       Speed
+       <output id="tremRate-label">
+       </output>
+      </label>
+      <input id="tremRate" max="10" min="0.2" step="0.1" type="range"/>
+     </div>
+    </div>
+    <div class="card-help" hidden="" id="help-tremolo">
+     <p>
+      Tremolo moves volume up and down. Unlike vibrato, it does not change pitch.
+     </p>
+     <p>
+      Raise Depth, then adjust Speed. The curve shows volume rising and falling. At 2 Hz it pulses twice per second.
+     </p>
+    </div>
+   </section>
+   <section aria-label="PWM" class="module" data-card="pwm" id="lesson-pwm">
+    <div class="module-title">
+     <span class="module-name"><span class="number">23</span>
+     PWM</span>
+     <span class="module-actions"><button class="isolate" data-isolate="pwm" aria-label="Isolate pwm module" aria-pressed="false" type="button">Isolate</button><button class="mute" data-mute="pwm" aria-pressed="false" type="button" aria-label="Mute pwm module">Mute</button></span>
+     <button aria-controls="help-pwm" aria-expanded="false" aria-label="Explain PWM" class="question" data-help="pwm">
+      ?
+     </button>
+    </div>
+    <button aria-pressed="false" class="live-view" data-listen="pwm">
+     <canvas aria-label="PWM parameter diagram" id="live-pwm">
+     </canvas>
+     <span class="listen-label">
+      ▶ Listen
+     </span>
+    </button>
+    <div class="card-controls" id="controls-pwm">
+     <div class="choices">
+      <button aria-pressed="false" data-choice="pwmOn" data-value="0">
+       Off
+      </button>
+      <button aria-pressed="false" data-choice="pwmOn" data-value="1">
+       On
+      </button>
+     </div>
+     <div class="control">
+      <label class="label" for="adv-pulseWidth">
+       Width
+       <output id="adv-pulseWidth-label">
+       </output>
+      </label>
+      <input data-advanced="pulseWidth" id="adv-pulseWidth" max="90" min="10" step="1" type="range"/>
+     </div>
+    </div>
+    <div class="card-help" hidden="" id="help-pwm">
+     <p>
+      PWM changes how long a pulse stays high. Half-and-half sounds like a square wave; a narrow pulse sounds thinner.
+     </p>
+     <p>
+      Enable it, then move Width. It replaces the main wave, not the second layer. Sync and Wavetable take priority if enabled.
+     </p>
+    </div>
+   </section>
+   <section aria-label="Wavetable" class="module" data-card="wavetable" id="lesson-wavetable">
+    <div class="module-title">
+     <span class="module-name"><span class="number">24</span>
+     Wavetable</span>
+     <span class="module-actions"><button class="isolate" data-isolate="wavetable" aria-label="Isolate wavetable module" aria-pressed="false" type="button">Isolate</button><button class="mute" data-mute="wavetable" aria-pressed="false" type="button" aria-label="Mute wavetable module">Mute</button></span>
+     <button aria-controls="help-wavetable" aria-expanded="false" aria-label="Explain Wavetable" class="question" data-help="wavetable">
+      ?
+     </button>
+    </div>
+    <button aria-pressed="false" class="live-view" data-listen="wavetable">
+     <canvas aria-label="Wavetable parameter diagram" id="live-wavetable">
+     </canvas>
+     <span class="listen-label">
+      ▶ Listen
+     </span>
+    </button>
+    <div class="card-controls" id="controls-wavetable">
+     <div class="choices">
+      <button aria-pressed="false" data-choice="tableOn" data-value="0">
+       Off
+      </button>
+      <button aria-pressed="false" data-choice="tableOn" data-value="1">
+       On
+      </button>
+     </div>
+     <div class="control">
+      <label class="label" for="adv-tablePosition">
+       Position
+       <output id="adv-tablePosition-label">
+       </output>
+      </label>
+      <input data-advanced="tablePosition" id="adv-tablePosition" max="100" min="0" step="1" type="range"/>
+     </div>
+    </div>
+    <div class="card-help" hidden="" id="help-wavetable">
+     <p>
+      A wavetable stores different wave shapes. This small table morphs from Sine through Triangle to Saw.
+     </p>
+     <p>
+      Enable it and move Position to change tone continuously. It replaces the main wave. Sync takes priority if enabled.
+     </p>
+    </div>
+   </section>
+   <section aria-label="Sample &amp; Hold" class="module" data-card="samplehold" id="lesson-samplehold">
+    <div class="module-title">
+     <span class="module-name"><span class="number">25</span>
+     Sample &amp; Hold</span>
+     <span class="module-actions"><button class="isolate" data-isolate="samplehold" aria-label="Isolate samplehold module" aria-pressed="false" type="button">Isolate</button><button class="mute" data-mute="samplehold" aria-pressed="false" type="button" aria-label="Mute samplehold module">Mute</button></span>
+     <button aria-controls="help-samplehold" aria-expanded="false" aria-label="Explain Sample &amp; Hold" class="question" data-help="samplehold">
+      ?
+     </button>
+    </div>
+    <button aria-pressed="false" class="live-view" data-listen="samplehold">
+     <canvas aria-label="Sample &amp; Hold parameter diagram" id="live-samplehold">
+     </canvas>
+     <span class="listen-label">
+      ▶ Listen
+     </span>
+    </button>
+    <div class="card-controls" id="controls-samplehold">
+     <div class="control">
+      <label class="label" for="adv-sampleHold">
+       Amount
+       <output id="adv-sampleHold-label">
+       </output>
+      </label>
+      <input data-advanced="sampleHold" id="adv-sampleHold" max="24" min="0" step="1" type="range"/>
+     </div>
+     <div class="control">
+      <label class="label" for="adv-sampleRate">
+       Speed
+       <output id="adv-sampleRate-label">
+       </output>
+      </label>
+      <input data-advanced="sampleRate" id="adv-sampleRate" max="12" min="0.1" step="0.1" type="range"/>
+     </div>
+    </div>
+    <div class="card-help" hidden="" id="help-samplehold">
+     <p>
+      Sample &amp; Hold chooses a random value and holds it until the next step. Here it moves the filter cutoff in steps.
+     </p>
+     <p>
+      Raise Amount on Saw. Speed sets changes per second. The example loops a stored set of random steps.
+     </p>
+    </div>
+   </section>
+   <section aria-label="Oscillator Sync" class="module" data-card="sync" id="lesson-sync">
+    <div class="module-title">
+     <span class="module-name"><span class="number">26</span>
+     Oscillator Sync</span>
+     <span class="module-actions"><button class="isolate" data-isolate="sync" aria-label="Isolate sync module" aria-pressed="false" type="button">Isolate</button><button class="mute" data-mute="sync" aria-pressed="false" type="button" aria-label="Mute sync module">Mute</button></span>
+     <button aria-controls="help-sync" aria-expanded="false" aria-label="Explain Oscillator Sync" class="question" data-help="sync">
+      ?
+     </button>
+    </div>
+    <button aria-pressed="false" class="live-view" data-listen="sync">
+     <canvas aria-label="Oscillator Sync parameter diagram" id="live-sync">
+     </canvas>
+     <span class="listen-label">
+      ▶ Listen
+     </span>
+    </button>
+    <div class="card-controls" id="controls-sync">
+     <div class="choices">
+      <button aria-pressed="false" data-choice="syncOn" data-value="0">
+       Off
+      </button>
+      <button aria-pressed="false" data-choice="syncOn" data-value="1">
+       On
+      </button>
+     </div>
+     <div class="control">
+      <label class="label" for="adv-syncRatio">
+       Ratio
+       <output id="adv-syncRatio-label">
+       </output>
+      </label>
+      <input data-advanced="syncRatio" id="adv-syncRatio" max="8" min="1" step="0.1" type="range"/>
+     </div>
+    </div>
+    <div class="card-help" hidden="" id="help-sync">
+     <p>
+      Sync restarts one oscillator every time another completes a cycle. The reset adds harmonics while the main note stays fixed.
+     </p>
+     <p>
+      Raise Ratio to fit more slave cycles before each reset. This example uses a sine slave and a band-limited repeating wave.
+     </p>
+    </div>
+   </section>
+   <section aria-label="Phaser" class="module" data-card="phaser" id="lesson-phaser">
+    <div class="module-title">
+     <span class="module-name"><span class="number">27</span>
+     Phaser</span>
+     <span class="module-actions"><button class="isolate" data-isolate="phaser" aria-label="Isolate phaser module" aria-pressed="false" type="button">Isolate</button><button class="mute" data-mute="phaser" aria-pressed="false" type="button" aria-label="Mute phaser module">Mute</button></span>
+     <button aria-controls="help-phaser" aria-expanded="false" aria-label="Explain Phaser" class="question" data-help="phaser">
+      ?
+     </button>
+    </div>
+    <button aria-pressed="false" class="live-view" data-listen="phaser">
+     <canvas aria-label="Phaser parameter diagram" id="live-phaser">
+     </canvas>
+     <span class="listen-label">
+      ▶ Listen
+     </span>
+    </button>
+    <div class="card-controls" id="controls-phaser">
+     <div class="control">
+      <label class="label" for="adv-phaser">
+       Level
+       <output id="adv-phaser-label">
+       </output>
+      </label>
+      <input data-advanced="phaser" id="adv-phaser" max="100" min="0" step="1" type="range"/>
+     </div>
+     <div class="control">
+      <label class="label" for="adv-phaserRate">
+       Speed
+       <output id="adv-phaserRate-label">
+       </output>
+      </label>
+      <input data-advanced="phaserRate" id="adv-phaserRate" max="5" min="0.1" step="0.1" type="range"/>
+     </div>
+    </div>
+    <div class="card-help" hidden="" id="help-phaser">
+     <p>
+      A phaser combines the sound with a phase-shifted copy. Some frequencies cancel, creating moving notches.
+     </p>
+     <p>
+      Raise Level on Saw, then adjust Speed. The diagram illustrates the moving notches, not the output spectrum.
+     </p>
+    </div>
+   </section>
+   <section aria-label="Flanger" class="module" data-card="flanger" id="lesson-flanger">
+    <div class="module-title">
+     <span class="module-name"><span class="number">28</span>
+     Flanger</span>
+     <span class="module-actions"><button class="isolate" data-isolate="flanger" aria-label="Isolate flanger module" aria-pressed="false" type="button">Isolate</button><button class="mute" data-mute="flanger" aria-pressed="false" type="button" aria-label="Mute flanger module">Mute</button></span>
+     <button aria-controls="help-flanger" aria-expanded="false" aria-label="Explain Flanger" class="question" data-help="flanger">
+      ?
+     </button>
+    </div>
+    <button aria-pressed="false" class="live-view" data-listen="flanger">
+     <canvas aria-label="Flanger parameter diagram" id="live-flanger">
+     </canvas>
+     <span class="listen-label">
+      ▶ Listen
+     </span>
+    </button>
+    <div class="card-controls" id="controls-flanger">
+     <div class="control">
+      <label class="label" for="adv-flanger">
+       Level
+       <output id="adv-flanger-label">
+       </output>
+      </label>
+      <input data-advanced="flanger" id="adv-flanger" max="100" min="0" step="1" type="range"/>
+     </div>
+     <div class="control">
+      <label class="label" for="adv-flangerRate">
+       Speed
+       <output id="adv-flangerRate-label">
+       </output>
+      </label>
+      <input data-advanced="flangerRate" id="adv-flangerRate" max="5" min="0.1" step="0.1" type="range"/>
+     </div>
+    </div>
+    <div class="card-help" hidden="" id="help-flanger">
+     <p>
+      Flanger mixes in a very short moving delay. It creates a brighter, metallic sweep than Chorus.
+     </p>
+     <p>
+      Raise Level and hold a note. The diagram shows the changing gap between original and delayed waves.
+     </p>
+    </div>
+   </section>
+
+
+
+   <section aria-label="FM" class="module" data-card="fm" id="lesson-fm">
+    <div class="module-title">
+     <span class="module-name"><span class="number">29</span>
+     FM</span>
+     <span class="module-actions"><button class="isolate" data-isolate="fm" aria-label="Isolate fm module" aria-pressed="false" type="button">Isolate</button><button class="mute" data-mute="fm" aria-pressed="false" type="button" aria-label="Mute fm module">Mute</button></span>
+     <button aria-controls="help-fm" aria-expanded="false" aria-label="Explain FM" class="question" data-help="fm">
+      ?
+     </button>
+    </div>
+    <button aria-pressed="false" class="live-view" data-listen="fm">
+     <canvas aria-label="FM parameter diagram" id="live-fm">
+     </canvas>
+     <span class="listen-label">
+      ▶ Listen
+     </span>
+    </button>
+    <div class="card-controls" id="controls-fm">
+     <div class="control">
+      <label class="label" for="adv-fmIndex">
+       Depth
+       <output id="adv-fmIndex-label">
+       </output>
+      </label>
+      <input data-advanced="fmIndex" id="adv-fmIndex" max="5" min="0" step="0.05" type="range"/>
+     </div>
+     <div class="control">
+      <label class="label" for="adv-fmRatio">
+       Ratio
+       <output id="adv-fmRatio-label">
+       </output>
+      </label>
+      <input data-advanced="fmRatio" id="adv-fmRatio" max="8" min="0.5" step="0.5" type="range"/>
+     </div>
+    </div>
+    <div class="card-help" hidden="" id="help-fm">
+     <p>
+      FM moves the main oscillator’s frequency fast enough to create new tones, not a slow vibrato.
+     </p>
+     <p>
+      Start with Sine and raise Depth. Ratio sets the modulator frequency relative to the note. Integer ratios tend to sound more harmonic.
+     </p>
+    </div>
+   </section>
+   <section aria-label="Ring Modulation" class="module" data-card="ring" id="lesson-ring">
+    <div class="module-title">
+     <span class="module-name"><span class="number">30</span>
+     Ring Modulation</span>
+     <span class="module-actions"><button class="isolate" data-isolate="ring" aria-label="Isolate ring module" aria-pressed="false" type="button">Isolate</button><button class="mute" data-mute="ring" aria-pressed="false" type="button" aria-label="Mute ring module">Mute</button></span>
+     <button aria-controls="help-ring" aria-expanded="false" aria-label="Explain Ring Modulation" class="question" data-help="ring">
+      ?
+     </button>
+    </div>
+    <button aria-pressed="false" class="live-view" data-listen="ring">
+     <canvas aria-label="Ring Modulation parameter diagram" id="live-ring">
+     </canvas>
+     <span class="listen-label">
+      ▶ Listen
+     </span>
+    </button>
+    <div class="card-controls" id="controls-ring">
+     <div class="control">
+      <label class="label" for="adv-ring">
+       Amount
+       <output id="adv-ring-label">
+       </output>
+      </label>
+      <input data-advanced="ring" id="adv-ring" max="100" min="0" step="1" type="range"/>
+     </div>
+     <div class="control">
+      <label class="label" for="adv-ringFreq">
+       Frequency
+       <output id="adv-ringFreq-label">
+       </output>
+      </label>
+      <input data-advanced="ringFreq" id="adv-ringFreq" max="2000" min="10" step="1" type="range"/>
+     </div>
+    </div>
+    <div class="card-help" hidden="" id="help-ring">
+     <p>
+      Ring modulation multiplies the sound by another wave. It creates frequencies at the sum and difference of the originals.
+     </p>
+     <p>
+      Try a sine note and raise Amount. Frequency changes the metallic side tones. At full amount the original is replaced.
+     </p>
+    </div>
+   </section>
+   <section aria-label="Bitcrusher" class="module" data-card="crusher" id="lesson-crusher">
+    <div class="module-title">
+     <span class="module-name"><span class="number">31</span>
+     Bitcrusher</span>
+     <span class="module-actions"><button class="isolate" data-isolate="crusher" aria-label="Isolate crusher module" aria-pressed="false" type="button">Isolate</button><button class="mute" data-mute="crusher" aria-pressed="false" type="button" aria-label="Mute crusher module">Mute</button></span>
+     <button aria-controls="help-crusher" aria-expanded="false" aria-label="Explain Bitcrusher" class="question" data-help="crusher">
+      ?
+     </button>
+    </div>
+    <button aria-pressed="false" class="live-view" data-listen="crusher">
+     <canvas aria-label="Bitcrusher parameter diagram" id="live-crusher">
+     </canvas>
+     <span class="listen-label">
+      ▶ Listen
+     </span>
+    </button>
+    <div class="card-controls" id="controls-crusher">
+     <div class="control">
+      <label class="label" for="adv-bits">
+       Bits
+       <output id="adv-bits-label">
+       </output>
+      </label>
+      <input data-advanced="bits" id="adv-bits" max="16" min="3" step="1" type="range"/>
+     </div>
+    </div>
+    <div class="card-help" hidden="" id="help-crusher">
+     <p>
+      Bit depth controls how many amplitude levels a signal can use. Fewer levels create grainy distortion.
+     </p>
+     <p>
+      Lower Bits on a held note. Sixteen bypasses this effect; this example reduces amplitude resolution, not sample rate.
+     </p>
+    </div>
+   </section>
+   <section aria-label="Wavefolder" class="module" data-card="folder" id="lesson-folder">
+    <div class="module-title">
+     <span class="module-name"><span class="number">32</span>
+     Wavefolder</span>
+     <span class="module-actions"><button class="isolate" data-isolate="folder" aria-label="Isolate folder module" aria-pressed="false" type="button">Isolate</button><button class="mute" data-mute="folder" aria-pressed="false" type="button" aria-label="Mute folder module">Mute</button></span>
+     <button aria-controls="help-folder" aria-expanded="false" aria-label="Explain Wavefolder" class="question" data-help="folder">
+      ?
+     </button>
+    </div>
+    <button aria-pressed="false" class="live-view" data-listen="folder">
+     <canvas aria-label="Wavefolder parameter diagram" id="live-folder">
+     </canvas>
+     <span class="listen-label">
+      ▶ Listen
+     </span>
+    </button>
+    <div class="card-controls" id="controls-folder">
+     <div class="control">
+      <label class="label" for="adv-fold">
+       Amount
+       <output id="adv-fold-label">
+       </output>
+      </label>
+      <input data-advanced="fold" id="adv-fold" max="100" min="0" step="1" type="range"/>
+     </div>
+    </div>
+    <div class="card-help" hidden="" id="help-folder">
+     <p>
+      A wavefolder folds peaks back inward rather than clipping them flat. The folds create extra harmonics.
+     </p>
+     <p>
+      Try Sine and raise Amount. The curve maps the input to the folded output.
+     </p>
+    </div>
+   </section>
+   <section aria-label="Compressor" class="module" data-card="compressor" id="lesson-compressor">
+    <div class="module-title">
+     <span class="module-name"><span class="number">33</span>
+     Compressor</span>
+     <span class="module-actions"><button class="isolate" data-isolate="compressor" aria-label="Isolate compressor module" aria-pressed="false" type="button">Isolate</button><button class="mute" data-mute="compressor" aria-pressed="false" type="button" aria-label="Mute compressor module">Mute</button></span>
+     <button aria-controls="help-compressor" aria-expanded="false" aria-label="Explain Compressor" class="question" data-help="compressor">
+      ?
+     </button>
+    </div>
+    <button aria-pressed="false" class="live-view" data-listen="compressor">
+     <canvas aria-label="Compressor input and output curve" id="live-compressor">
+     </canvas>
+     <span class="listen-label">
+      ▶ Listen
+     </span>
+    </button>
+    <div class="card-controls" id="controls-compressor">
+     <div class="control">
+      <label class="label" for="adv-compThreshold">
+       Threshold
+       <output id="adv-compThreshold-label">
+       </output>
+      </label>
+      <input data-advanced="compThreshold" id="adv-compThreshold" max="0" min="-48" step="1" type="range"/>
+     </div>
+     <div class="control">
+      <label class="label" for="adv-compRatio">
+       Ratio
+       <output id="adv-compRatio-label">
+       </output>
+      </label>
+      <input data-advanced="compRatio" id="adv-compRatio" max="12" min="1" step=".5" type="range"/>
+     </div>
+    </div>
+    <div class="card-help" hidden="" id="help-compressor">
+     <p>
+      A compressor reduces changes in loudness. Above Threshold, the signal gets quieter than it would without compression.
+     </p>
+     <p>
+      At 4:1, an extra 4 dB above the threshold becomes 1 dB at the output. Lower Threshold while playing. Ratio 1:1 bypasses this stage; the output safety compressor stays active.
+     </p>
+    </div>
+   </section>
+   <section aria-label="Bass" class="module" data-card="bass" id="lesson-bass">
+    <div class="module-title">
+     <span class="module-name"><span class="number">34</span> Bass</span>
+     <span class="module-actions"><button class="isolate" data-isolate="bass" aria-label="Isolate bass module" aria-pressed="false" type="button">Isolate</button><button class="mute" data-mute="bass" aria-pressed="false" type="button" aria-label="Mute bass module">Mute</button></span>
+     <button class="question" data-help="bass" aria-controls="help-bass" aria-expanded="false" aria-label="Explain Bass">?</button>
+    </div>
+    <button class="live-view" data-listen="bass" aria-pressed="false"><canvas id="live-bass" aria-label="Bass shelf frequency response"></canvas><span class="listen-label">▶ Listen</span></button>
+    <div class="card-controls" id="controls-bass"><div class="control">
+     <label class="label" for="adv-bass">Gain <output id="adv-bass-label"></output></label>
+     <input data-advanced="bass" id="adv-bass" type="range" min="-12" max="12" step="0.5"/>
+    </div></div>
+    <div class="card-help" id="help-bass" hidden><p>Boost or cut the low end below 200 Hz. Positive values add weight; negative values make room for other instruments.</p><p>At 0 dB the sound is unchanged. The curve shows the gain across frequencies, not the current sound level.</p></div>
+   </section>
+   <section aria-label="Treble" class="module" data-card="treble" id="lesson-treble">
+    <div class="module-title">
+     <span class="module-name"><span class="number">35</span> Treble</span>
+     <span class="module-actions"><button class="isolate" data-isolate="treble" aria-label="Isolate treble module" aria-pressed="false" type="button">Isolate</button><button class="mute" data-mute="treble" aria-pressed="false" type="button" aria-label="Mute treble module">Mute</button></span>
+     <button class="question" data-help="treble" aria-controls="help-treble" aria-expanded="false" aria-label="Explain Treble">?</button>
+    </div>
+    <button class="live-view" data-listen="treble" aria-pressed="false"><canvas id="live-treble" aria-label="Treble shelf frequency response"></canvas><span class="listen-label">▶ Listen</span></button>
+    <div class="card-controls" id="controls-treble"><div class="control">
+     <label class="label" for="adv-treble">Gain <output id="adv-treble-label"></output></label>
+     <input data-advanced="treble" id="adv-treble" type="range" min="-12" max="12" step="0.5"/>
+    </div></div>
+    <div class="card-help" id="help-treble" hidden><p>Boost or cut the high end above 3 kHz. Positive values add brightness; negative values soften the sound.</p><p>At 0 dB the sound is unchanged. The curve shows the gain across frequencies, not the current sound level.</p></div>
+   </section>
+   <section aria-label="Auto Pan" class="module" data-card="autopan" id="lesson-autopan">
+    <div class="module-title">
+     <span class="module-name"><span class="number">36</span> Auto Pan</span>
+     <span class="module-actions"><button class="isolate" data-isolate="autopan" aria-label="Isolate Auto Pan" aria-pressed="false" type="button">Isolate</button><button class="mute" data-mute="autopan" aria-label="Mute Auto Pan" aria-pressed="false" type="button">Mute</button></span>
+     <button class="question" data-help="autopan" aria-controls="help-autopan" aria-expanded="false" aria-label="Explain Auto Pan">?</button>
+    </div>
+    <button class="live-view" data-listen="autopan" aria-pressed="false"><canvas id="live-autopan" aria-label="Auto Pan motion and depth"></canvas><span class="listen-label">▶ Listen</span></button>
+    <div class="card-controls" id="controls-autopan">
+     <div class="control"><label class="label" for="adv-autoPan">Depth <output id="adv-autoPan-label"></output></label><input data-advanced="autoPan" id="adv-autoPan" type="range" min="0" max="100" step="1"/></div>
+     <div class="control"><label class="label" for="adv-autoPanRate">Rate <output id="adv-autoPanRate-label"></output></label><input data-advanced="autoPanRate" id="adv-autoPanRate" type="range" min="0.05" max="12" step="0.01"/></div>
+    </div>
+    <div class="card-help" id="help-autopan" hidden>
+     <p>Auto Pan moves the sound between your left and right speakers. Depth controls how far; Rate controls how fast. At 1 Hz, one round trip takes a second.</p>
+     <p>Try Warm pad, Depth 70% and Rate 0.5 Hz with headphones. The curve shows the movement range; the dot moves while notes play. Pan sets the center, so movement narrows near either edge. Depth 0 switches the effect off.</p>
+    </div>
+   </section>
+  </div>
+ </main>
+ <script src="src/app.js" type="module">
+ </script>
+</html>
